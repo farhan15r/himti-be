@@ -1,7 +1,7 @@
-const InvarianError = require('../exceptions/InvariantError');
+const ClientError = require('../exceptions/ClientError');
 
 const errorHandler = (err, req, res, next) => {
-  if (err instanceof InvarianError) {
+  if (err instanceof ClientError) {
     res.status(err.statusCode).json({
       code: err.statusCode,
       message: err.message,
