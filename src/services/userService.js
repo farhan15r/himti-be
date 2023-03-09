@@ -2,6 +2,7 @@ const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
 const { user: User } = require('../../db/models');
 const ClientError = require('../exceptions/ClientError');
+const AuthenticationError = require('../exceptions/AuthenticationError');
 
 const getAllUsers = async () => User.findAll();
 
@@ -25,4 +26,28 @@ const createUser = async (payload) => {
   }).then((user) => user.dataValues);
 };
 
-module.exports = { getAllUsers, createUser, isUsernameAvailable };
+const getUserByUsername = async (username) => {
+  const user = await User.findOne({ where: { username } });
+
+  if (!user) {
+    throw new AuthenticationError('Username or password is wrong');
+  }
+
+  return user.dataValues;
+};
+
+const comparePassword = async (password, hashedPassword) => {
+  const isMatch = await bcrypt.compare(password, hashedPassword);
+
+  if (!isMatch) {
+    throw new AuthenticationError('Username or password is wrong');
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  createUser,
+  isUsernameAvailable,
+  getUserByUsername,
+  comparePassword,
+};
