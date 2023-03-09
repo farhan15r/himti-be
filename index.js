@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const homeRoute = require('./src/routes/homeRoute');
 const userRoute = require('./src/routes/userRoute');
+const authenticationRoute = require('./src/routes/authenticationRoute');
 const errorHandler = require('./src/handlers/errorHandler');
 
 dotenv.config();
@@ -15,6 +16,7 @@ const server = async () => {
 
   app.use(homeRoute);
   app.use(userRoute);
+  app.use(authenticationRoute);
 
   app.use((req, res) => {
     res.status(404).json({
