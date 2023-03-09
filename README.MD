@@ -45,6 +45,6 @@ if fail
 ```json
 {
   "code": 400,
-  "message": "Username already exists" // or some other message of error
+  "message": "Message of error"
 }
 ```
