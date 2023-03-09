@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { authentication: Authentication } = require('../../db/models');
+const NotFoundError = require('../exceptions/NotFoundError');
 
 const generateAccessToken = (user) => {
   const payload = {
@@ -28,8 +29,28 @@ const saveRefreshToken = async (refreshToken) => {
   await Authentication.create({ refresh_token: refreshToken });
 };
 
+const verifyRefreshToken = async (refreshToken) => {
+  const token = await Authentication.findOne({
+    where: { refresh_token: refreshToken },
+  });
+
+  if (!token) {
+    throw new NotFoundError('Refresh token not found');
+  }
+};
+
+const decodeRefreshToken = (refreshToken) =>
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      throw new NotFoundError('Invalid refresh token');
+    }
+    return decoded;
+  });
+
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
   saveRefreshToken,
+  verifyRefreshToken,
+  decodeRefreshToken,
 };

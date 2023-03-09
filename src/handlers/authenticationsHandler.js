@@ -28,4 +28,24 @@ const postHandler = async (req, res, next) => {
   }
 };
 
-module.exports = { postHandler };
+const putHandler = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    await tokenService.verifyRefreshToken(payload.refreshToken);
+
+    const user = tokenService.decodeRefreshToken(payload.refreshToken);
+    const accessToken = tokenService.generateAccessToken(user);
+
+    res.status(201).json({
+      code: 201,
+      message: 'Refresh token success',
+      data: {
+        accessToken,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { postHandler, putHandler };
