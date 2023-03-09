@@ -15,8 +15,8 @@ const postHandler = async (req, res, next) => {
 
     await tokenService.saveRefreshToken(refreshToken);
 
-    res.status(200).json({
-      code: 200,
+    res.status(201).json({
+      code: 201,
       message: 'Authentication success',
       data: {
         accessToken,
@@ -48,4 +48,20 @@ const putHandler = async (req, res, next) => {
   }
 };
 
-module.exports = { postHandler, putHandler };
+const deleteHandler = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    await tokenService.verifyRefreshToken(payload.refreshToken);
+
+    await tokenService.deleteRefreshToken(payload.refreshToken);
+
+    res.status(200).json({
+      code: 200,
+      message: 'Logout success',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { postHandler, putHandler, deleteHandler };

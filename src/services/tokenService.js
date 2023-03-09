@@ -47,10 +47,17 @@ const decodeRefreshToken = (refreshToken) =>
     return decoded;
   });
 
+const deleteRefreshToken = async (refreshToken) => {
+  await Authentication.destroy({
+    where: { refresh_token: refreshToken },
+  });
+};
+
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
   saveRefreshToken,
   verifyRefreshToken,
   decodeRefreshToken,
+  deleteRefreshToken,
 };
