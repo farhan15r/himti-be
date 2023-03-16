@@ -20,7 +20,12 @@ const generateRefreshToken = (user) => {
     id: user.id,
     username: user.username,
   };
-  const token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET);
+
+  const options = {
+    expiresIn: process.env.REFRESH_TOKEN_LIFE,
+  };
+
+  const token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, options);
 
   return token;
 };
