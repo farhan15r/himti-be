@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { authentication: Authentication } = require('../../db/models');
+const AuthenticationError = require('../exceptions/AuthenticationError');
 const NotFoundError = require('../exceptions/NotFoundError');
 
 const generateAccessToken = (user) => {
@@ -42,10 +43,31 @@ const verifyRefreshToken = async (refreshToken) => {
 const decodeRefreshToken = (refreshToken) =>
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) {
+      Authentication.destroy({
+        where: { refresh_token: refreshToken },
+      });
+
       throw new NotFoundError('Invalid refresh token');
     }
     return decoded;
   });
+
+const decodeAccessToken = (accessToken) => {
+  if (!accessToken) {
+    throw new AuthenticationError('Access token not found');
+  }
+
+  return jwt.verify(
+    accessToken,
+    process.env.ACCESS_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        throw new AuthenticationError('Invalid access token');
+      }
+      return decoded;
+    }
+  );
+};
 
 const deleteRefreshToken = async (refreshToken) => {
   await Authentication.destroy({
@@ -59,5 +81,6 @@ module.exports = {
   saveRefreshToken,
   verifyRefreshToken,
   decodeRefreshToken,
+  decodeAccessToken,
   deleteRefreshToken,
 };
