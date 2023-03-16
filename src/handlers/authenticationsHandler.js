@@ -1,6 +1,7 @@
 const authPostValidator = require('../validator/authPostValidator');
 const userService = require('../services/userService');
 const tokenService = require('../services/tokenService');
+const authPutValidator = require('../validator/authPutValidator');
 
 const postHandler = async (req, res, next) => {
   try {
@@ -31,13 +32,14 @@ const postHandler = async (req, res, next) => {
 const putHandler = async (req, res, next) => {
   try {
     const payload = req.body;
+    authPutValidator(payload);
     await tokenService.verifyRefreshToken(payload.refreshToken);
 
     const user = tokenService.decodeRefreshToken(payload.refreshToken);
     const accessToken = tokenService.generateAccessToken(user);
 
-    res.status(201).json({
-      code: 201,
+    res.status(200).json({
+      code: 200,
       message: 'Refresh token success',
       data: {
         accessToken,

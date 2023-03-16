@@ -5,10 +5,13 @@ const ClientError = require('../exceptions/ClientError');
 const userPostValidator = (payload) => {
   const schema = Joi.object({
     name: Joi.string().required(),
-    username: Joi.string().required().max(50),
+    username: Joi.string()
+      .regex(/^[a-zA-Z]+[a-zA-Z0-9_]*$/)
+      .required()
+      .max(50),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
-    repeatPassword: Joi.ref('password'),
+    repeatPassword: Joi.string().required().valid(Joi.ref('password')),
   });
 
   // return schema.validate(payload);

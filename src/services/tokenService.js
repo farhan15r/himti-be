@@ -41,7 +41,7 @@ const verifyRefreshToken = async (refreshToken) => {
   });
 
   if (!token) {
-    throw new NotFoundError('Refresh token not found');
+    throw new NotFoundError('Invalid refresh token');
   }
 };
 
